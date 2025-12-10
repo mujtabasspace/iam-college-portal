@@ -14,10 +14,21 @@ app.use(express.json());
 app.use(cookieParser());
 
 // CORS config
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://iam-college-portal.vercel.app'
+];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true
 }));
+
 
 // health
 app.get('/health', (req, res) => res.json({ ok: true, ts: Date.now() }));
